@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -35,7 +34,6 @@ public class Robot extends TimedRobot {
     private GenericEntry grid22 = matchTab.add("BOT 3", false).withPosition(2, 2).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color When True", "Yellow", "Color When False", "Red")).withSize(1, 1).getEntry();
 
     private GenericEntry chunkEntry = matchTab.add("Scoring Chunk", "None!").withPosition(1, 3).withWidget(BuiltInWidgets.kTextView).getEntry();
-    private GenericEntry timeEntry = matchTab.add("Time Left", 0.).withPosition(3, 3).withWidget(BuiltInWidgets.kTextView).getEntry();
 
     /**
      * This function is run once when the robot is first started up and should be
@@ -72,7 +70,6 @@ public class Robot extends TimedRobot {
         grid22.setBoolean(subGridStatus[2][2]);
 
         chunkEntry.setString(robotContainer.getChunk());
-        timeEntry.setDouble(DriverStation.getMatchTime());
     }
 
     /**

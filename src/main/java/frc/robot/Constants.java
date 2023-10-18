@@ -50,6 +50,8 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = 0.47;
 
+    public static final double DRIVE_TRAINING_WHEELS = 0.3;
+
     /**
      * Creates a swerve kinematics object, to convert desired chassis velocity into
      * individual module states
@@ -131,7 +133,7 @@ public final class Constants {
     public static final double MIN_ARM_ANGLE_DEGREES = -130.;
 
     /** The max allowable extension of the arm */
-    public static final double MAX_ARM_EXTENSION_INCHES = 26.5;
+    public static final double MAX_ARM_EXTENSION_INCHES = 15.;
     /** The min allowable extension of the arm */
     public static final double MIN_ARM_EXTENSION_INCHES = 0.;
     /** The angle offset in degress for the arm's absolute encoder */
@@ -156,7 +158,7 @@ public final class Constants {
      */
     public static final double MAX_ARM_VELOCITY_DEGREES_PER_SECOND = (5676. / 60.) * ARM_ROTATION_CONVERSION;
 
-    public static final double ARM_ROTATION_TRAINING_WHEELS = 1.;
+    public static final double ARM_ROTATION_TRAINING_WHEELS = .5;
 
     public static final double ARM_EXTENSION_TRAINING_WHEELS = 0.25;
 

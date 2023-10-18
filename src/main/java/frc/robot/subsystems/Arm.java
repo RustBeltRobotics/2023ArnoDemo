@@ -7,9 +7,13 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -41,6 +45,13 @@ public class Arm extends SubsystemBase {
     private final ArmFeedforward extensionFF;
 
     // private final Timer timer;
+
+    private double rotationTrainingWheels = ARM_ROTATION_TRAINING_WHEELS;
+    private double extensionTrainingWheels = ARM_EXTENSION_TRAINING_WHEELS;
+
+    private ShuffleboardTab trainingWheelTab = Shuffleboard.getTab("Training Wheels");
+    private GenericEntry rotationTrainingWheelEntry = trainingWheelTab.add("Rotation", ARM_ROTATION_TRAINING_WHEELS).withPosition(1, 1).withWidget(BuiltInWidgets.kTextView).getEntry();
+    private GenericEntry extensionTrainingWheelEntry = trainingWheelTab.add("Extension", ARM_EXTENSION_TRAINING_WHEELS).withPosition(2, 1).withWidget(BuiltInWidgets.kTextView).getEntry();
 
     public Arm() {
         // Setup the SparkMax objects and encoders. Note that we set all of the
@@ -278,13 +289,15 @@ public class Arm extends SubsystemBase {
 
     private double[] checkDriveRates(double rotationRate, double extensionRate) {
         calculateMaxExtension(getAngle());
+        rotationRate = MathUtil.clamp(rotationRate, -rotationTrainingWheels, rotationTrainingWheels);
+        extensionRate = MathUtil.clamp(extensionRate, -extensionTrainingWheels, extensionTrainingWheels);
         double[] rates = { rotationRate, extensionRate };
         return rates;
     }
 
     /**
      * Calculates the max allowable extension of the arm at a given angle.
-     * TODO: Right now this just returns the abosulte max extension regardless of
+     * TODO: Right now this just returns the absolute max extension regardless of
      * angle. As the robot is finalized, we will need to flesh this out.
      * 
      * @param angle The angle for which the max allowable extension is calculated.
@@ -303,8 +316,7 @@ public class Arm extends SubsystemBase {
     /** This method is run every 20 ms */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Angle", getAngle());
-        SmartDashboard.putNumber("Absolute", getAbsoluteAngle());
-        SmartDashboard.putNumber("Extension", getExtension());
+        rotationTrainingWheels = rotationTrainingWheelEntry.getDouble(ARM_ROTATION_TRAINING_WHEELS);
+        extensionTrainingWheels = extensionTrainingWheelEntry.getDouble(ARM_EXTENSION_TRAINING_WHEELS);
     }
 }

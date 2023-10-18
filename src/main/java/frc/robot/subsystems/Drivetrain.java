@@ -6,7 +6,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -26,6 +30,11 @@ public class Drivetrain extends SubsystemBase {
 
     // The speed of the robot in x and y translational velocities and rotational velocity
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+
+    private double driveTrainingWheels = DRIVE_TRAINING_WHEELS;
+
+    private ShuffleboardTab trainingWheelTab = Shuffleboard.getTab("Training Wheels");
+    private GenericEntry driveTrainingWheelEntry = trainingWheelTab.add("Drive", DRIVE_TRAINING_WHEELS).withPosition(0, 1).withWidget(BuiltInWidgets.kTextView).getEntry();
 
     public Drivetrain() {
         // Initialize all modules
@@ -109,6 +118,10 @@ public class Drivetrain extends SubsystemBase {
         backRightModule.setState(states[3]);
     }
 
+    public double getDriveTrainingWheels() {
+        return driveTrainingWheels;
+    }
+
     /**
      * Used to drive the robot with the provided ChassisSpeed object. However, if
      * the robot is in autobalance mode, the ChassisSpeed object is ignored, and a
@@ -129,6 +142,8 @@ public class Drivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        driveTrainingWheels = driveTrainingWheelEntry.getDouble(DRIVE_TRAINING_WHEELS);
+
         // Convert from ChassisSpeeds to SwerveModuleStates
         SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(chassisSpeeds);
         // Make sure no modules are being commanded to velocites greater than the max possible velocity

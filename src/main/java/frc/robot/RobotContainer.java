@@ -32,8 +32,6 @@ public class RobotContainer {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
-    // Limits maximum speed
-    private double maxSpeedFactor = .3;
 
     private int selectedRow = 0;
     private int selectedCol = 0;
@@ -60,16 +58,16 @@ public class RobotContainer {
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation        
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
-            () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-            () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-            () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+            () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * drivetrain.getDriveTrainingWheels(),
+            () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * drivetrain.getDriveTrainingWheels(),
+            () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * drivetrain.getDriveTrainingWheels()));
 
         // Set up the default command for the arm
         // Right stick Y axis -> arm rotation
         // Left stick Y axis -> arm extension
         arm.setDefaultCommand(new DefaultArmCommand(arm,
-                () -> modifyAxis(operatorController.getLeftY()) * ARM_ROTATION_TRAINING_WHEELS,
-                () -> modifyAxis(operatorController.getLeftX()) * ARM_EXTENSION_TRAINING_WHEELS));
+                () -> modifyAxis(operatorController.getLeftY()),
+                () -> modifyAxis(operatorController.getLeftX())));
         
         // Set up the default command for the intake
         // Left trigger -> intake
@@ -93,9 +91,9 @@ public class RobotContainer {
         new Trigger(operatorController::getAButton).whileTrue(arm.centerArm());
         // Holding Y button rotates and extends arm to the currently selecting scoring position
         new Trigger(operatorController::getYButton).whileTrue(arm.driveArmTo(() -> ARM_ANGLE_PRESET_SCORE[selectedRow][intake.gamepieceIsCube ? 1 : 0], () -> ARM_EXTENSION_PRESET_SCORE[selectedRow][intake.gamepieceIsCube ? 1 : 0]));
-        // Holding B button rotates and extends arm to the chute human player station position
+        // Holding B button rotates and extends arm to the single human player station position
         new Trigger(operatorController::getBButton).whileTrue(arm.driveArmTo(() -> ARM_ANGLE_PRESET_HUMANPLAYER[0], () -> ARM_EXTENSION_PRESET_HUMANPLAYER[0]));
-        // Holding B button rotates and extends arm to the chute human player station position
+        // Holding B button rotates and extends arm to the double human player station position
         new Trigger(operatorController::getXButton).whileTrue(arm.driveArmTo(() -> ARM_ANGLE_PRESET_HUMANPLAYER[1], () -> ARM_EXTENSION_PRESET_HUMANPLAYER[1]));
         // Holding back button rotates and extends arm to ground pickup from back position
         new Trigger(operatorController::getBackButton).whileTrue(arm.driveArmTo(() -> ARM_ANGLE_PRESET_GROUND_PICKUP[0], () -> ARM_EXTENSION_PRESET_GROUND_PICKUP[0]));
